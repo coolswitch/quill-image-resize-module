@@ -3,12 +3,22 @@ import IconAlignCenter from 'quill/assets/icons/align-center.svg';
 import IconAlignRight from 'quill/assets/icons/align-right.svg';
 import { BaseModule } from './BaseModule';
 
-const Parchment = window.Quill.imports.parchment;
-const FloatStyle = new Parchment.Attributor.Style('float', 'float');
-const MarginStyle = new Parchment.Attributor.Style('margin', 'margin');
-const DisplayStyle = new Parchment.Attributor.Style('display', 'display');
+let FloatStyle = null;
+let MarginStyle = null;
+let DisplayStyle = null;
 
 export class Toolbar extends BaseModule {
+    constructor(resizer) {
+        super(resizer);
+        if (resizer.$Q) {
+            let Parchment = resizer.$Q.imports.parchment;
+            FloatStyle = new Parchment.Attributor.Style('float', 'float');
+            MarginStyle = new Parchment.Attributor.Style('margin', 'margin');
+            DisplayStyle = new Parchment.Attributor.Style('display', 'display');        
+        }
+        this.$Q = resizer.$Q;
+    }
+
     onCreate = () => {
 		// Setup Toolbar
         this.toolbar = document.createElement('div');
@@ -27,6 +37,7 @@ export class Toolbar extends BaseModule {
     onUpdate = () => {};
 
     _defineAlignments = () => {
+        if (!this.$Q) return this.alignments = []; 
         this.alignments = [
             {
                 icon: IconAlignLeft,
@@ -59,6 +70,7 @@ export class Toolbar extends BaseModule {
     };
 
     _addToolbarButtons = () => {
+        if (!this.$Q) return; 
 		const buttons = [];
 		this.alignments.forEach((alignment, idx) => {
 			const button = document.createElement('span');
